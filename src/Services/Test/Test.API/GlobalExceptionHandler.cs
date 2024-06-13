@@ -14,6 +14,7 @@ namespace Test.API
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
 
+
             httpContext.Response.ContentType = "application/json";
             var exDetails = exception switch
             {
