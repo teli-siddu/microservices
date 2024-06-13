@@ -1,4 +1,8 @@
+using FluentValidation;
+using MediatR;
 using System.Reflection;
+using Test.API;
+using Test.API.Behaviours;
 using Test.API.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +14,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(options => options.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddSingleton<IDataAccess, DataAccess>();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -19,7 +27,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
