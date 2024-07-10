@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "8c18e4e7-7d45-4d32-a791-1f20a6cf8a55",
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Position": "Software Engineer",
+    "Department": "Engineering",
+    "Salary": 80000.00
+  },
+  {
+    "Id": "5f6b8c9a-2d31-4e6a-98a2-305e2f30a941",
+    "FirstName": "Jane",
+    "LastName": "Smith",
+    "Position": "Product Manager",
+    "Department": "Product Management",
+    "Salary": 100000.00
+  },
+  {
+    "Id": "3b9cf580-fd69-4d4c-8e1a-efac9e3f472f",
+    "FirstName": "Michael",
+    "LastName": "Johnson",
+    "Position": "Marketing Specialist",
+    "Department": "Marketing",
+    "Salary": 70000.00
+  },
+  {
+    "Id": "4f5e6d7c-8b9a-4c3d-6e7f-8a9b1c2d3e4f",
+    "FirstName": "Emily",
+    "LastName": "Brown",
+    "Position": "HR Manager",
+    "Department": "Human Resources",
+    "Salary": 90000.00
+  },
+  {
+    "Id": "1a2b3c4d-5e6f-7a8b-9c1d-2e3f4a5b6c7d",
+    "FirstName": "David",
+    "LastName": "Wilson",
+    "Position": "Finance Analyst",
+    "Department": "Finance",
+    "Salary": 85000.00
+  }
+]

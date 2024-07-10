@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  employeesdb:
+    image: postgres
+
+  employeesearchdb:
+    image: mongo
+
+  employees.api:
+    image: employeesapi
+    build:
+      context: .
+      dockerfile: Services/Employee/Employee.API/Dockerfile
+
+  employeessearch.api:
+    image: employeessearchapi
+    build:
+      context: .
+      dockerfile: Services/EmployeesSearch/EmployeesSearch.API/Dockerfile
+
+  rabbitmq:
+    image: rabbitmq:3.8-management
+ 
+
+volumes:
+  postgres_employees:
+  mongo_employees_search:
+

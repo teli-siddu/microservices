@@ -1,0 +1,55 @@
+version: '3.4'
+
+services:
+  employeesdb:
+    container_name: employeesdb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_employees:/var/lib/postgresql/data/
+
+  employeesearchdb:
+    container_name: employeesearchdb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=mongopw
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_employees_search:/var/lib/mongodb/data/
+
+  employees.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__pgDbConnection=server=employeesdb;port=5432;database=EmployeesDb;User Id=postgres; Password=postgres; Include Error Detail=true
+
+    depends_on:
+      - employeesdb
+
+    ports:
+      - "6000:8080"
+      - "6060:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  employeessearch.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__mongoDbConnection: mongodb://root:mongopw@employeesearchdb
+
+    depends_on:
+      - employeesearchdb
+
+    ports:
+      - "7002:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
