@@ -1,7 +1,9 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Messaging.Events;
 using Employees.API.Data;
 using Employees.API.Models;
 using FluentValidation;
+using MassTransit;
 
 namespace Employees.API.CreateEmployee
 {
@@ -21,7 +23,7 @@ namespace Employees.API.CreateEmployee
         }
     }
     internal class CreateEmployeeCommandHandler
-        (EmployeeDbContext _dbContext) 
+        (EmployeeDbContext _dbContext, IPublishEndpoint publishEndpoint) 
         : ICommandHandler<CreateEmployeeCommand, CreateEmployeeResult>
     {
         public async Task<CreateEmployeeResult> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
@@ -29,6 +31,16 @@ namespace Employees.API.CreateEmployee
             var employee=   request.Adapt<Employee>();
             await _dbContext.AddAsync<Employee>(employee);
             await _dbContext.SaveChangesAsync();
+            EmployeeCreatedEvent createdEvent = new EmployeeCreatedEvent
+            {
+                Department = employee.Department,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                Position = employee.Position,
+                Salary = employee.Salary
+
+            };
+            await publishEndpoint.Publish(createdEvent);
             return await Task.FromResult(new CreateEmployeeResult(employee.Id));
         
         }

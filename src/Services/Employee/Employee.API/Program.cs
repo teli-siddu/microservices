@@ -1,7 +1,9 @@
 using BuildingBlocks.Behaviours;
 using BuildingBlocks.Exceptions;
+using BuildingBlocks.Messaging;
 using FluentValidation;
 using HealthChecks.UI.Client;
+using MassTransit;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +29,10 @@ builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 //health check
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("pgDbConnection"));
+
+
+builder.Services.AddMessageBroker(builder.Configuration);
+
 var app = builder.Build();
 try
 {

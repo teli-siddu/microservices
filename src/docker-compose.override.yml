@@ -49,7 +49,15 @@ services:
       - employeesearchdb
 
     ports:
-      - "7002:80"
+      - "6001:8080"
+      - "6061:8081"
+
+
+  rabbitmq:
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
