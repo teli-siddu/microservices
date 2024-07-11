@@ -23,15 +23,31 @@ services:
     volumes:
       - mongo_employees_search:/var/lib/mongodb/data/
 
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: employees-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER =guest
+      - RABBITMQ_DEFAULT_PASS = guest
+    restart: always
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+
   employees.api:
+    container_name: employees.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__pgDbConnection=server=employeesdb;port=5432;database=EmployeesDb;User Id=postgres; Password=postgres; Include Error Detail=true
+      - MessageBroker__Host=amqp://employees-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
 
     depends_on:
       - employeesdb
+      - rabbitmq
 
     ports:
       - "6000:8080"
@@ -40,23 +56,22 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
   employeessearch.api:
+    container_name: employeessearch.api
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__mongoDbConnection: mongodb://root:mongopw@employeesearchdb
-
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__mongoDbConnection=mongodb://root:mongopw@employeesearchdb
+      - MessageBroker__Host=amqp://employees-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
     depends_on:
       - employeesearchdb
+      - rabbitmq
 
     ports:
       - "6001:8080"
       - "6061:8081"
-
-
-  rabbitmq:
-    ports:
-    - "5672:5672"
-    - "15672:15672"
 
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro

@@ -33,6 +33,7 @@ namespace Employees.API.CreateEmployee
             await _dbContext.SaveChangesAsync();
             EmployeeCreatedEvent createdEvent = new EmployeeCreatedEvent
             {
+                Id=employee.Id.ToString(),
                 Department = employee.Department,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,

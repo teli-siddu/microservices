@@ -8,6 +8,7 @@ namespace BuildingBlocks.Messaging.Events
 {
     public record EmployeeCreatedEvent:IntegrationEvent
     {
+        public string Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
