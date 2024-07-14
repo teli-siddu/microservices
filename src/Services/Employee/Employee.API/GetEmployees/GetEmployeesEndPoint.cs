@@ -1,18 +1,18 @@
 ﻿
+using BuildingBlocks.Pagination;
 using Employees.API.Models;
 
 namespace Employees.API.GetEmployees
 {
-    public record GetEmployeesRequest(int? PageNumber=1, int? PaginationSize=10);
-    public record GetEmployeesResponse(IEnumerable<Employee> Employees);
+    //public record GetEmployeesRequest(PaginationRequest PaginationRequest);
+    public record GetEmployeesResponse(PaginatedResult<Employee> Employees);
     public class GetEmployeesEndPoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/employees", async ([AsParameters] GetEmployeesRequest request, ISender sender) =>
+            app.MapGet("/api/employees", async ([AsParameters] PaginationRequest request, ISender sender) =>
             {
-                var query = request.Adapt<GetEmployeesQuery>();
-                var result = await sender.Send(query);
+                var result = await sender.Send(new GetEmployeesQuery(request));
                 var response = result.Adapt<GetEmployeesResponse>();
                 return Results.Ok(response);
             })

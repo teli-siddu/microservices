@@ -6,7 +6,8 @@
       "serviceActions": {
         "test.api": "StartDebugging",
         "employees.api": "StartDebugging",
-        "employeessearch.api": "StartDebugging"
+        "employeessearch.api": "StartDebugging",
+        "yarpapigateway": "StartDebugging"
       }
     }
   }

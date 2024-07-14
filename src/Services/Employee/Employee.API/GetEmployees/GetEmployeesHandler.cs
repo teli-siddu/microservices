@@ -1,27 +1,27 @@
-﻿using BuildingBlocks.CQRS;
-using Employees.API.Data;
-using Employees.API.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using BuildingBlocks.Pagination;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Employees.API.GetEmployees
 {
 
-    public record GetEmployeesQuery(int? PageNumber = 1, int? PaginationSize = 10) :IQuery<GetEmployeesResult>;
+    public record GetEmployeesQuery(PaginationRequest PaginationRequest) :IQuery<GetEmployeesResult>;
 
-    public record GetEmployeesResult(IEnumerable<Employee> Employees);
+    public record GetEmployeesResult(PaginatedResult<Employee> Employees);
     public class GetEmployeesHandler(EmployeeDbContext _dbContext)
         : IQueryHandler<GetEmployeesQuery, GetEmployeesResult>
     {
-        public async Task<GetEmployeesResult> Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
+        public async Task<GetEmployeesResult> Handle(GetEmployeesQuery query, CancellationToken cancellationToken)
         {
-            int pageNumber = request.PageNumber ?? 1;
-            int pageSize = request.PaginationSize ?? 10;
+
+            var pageIndex = query.PaginationRequest.PageIndex;
+            var pageSize = query.PaginationRequest.PageSize;
+            var totalCount = await _dbContext.Employees.LongCountAsync(cancellationToken);
             var employees= await _dbContext.Employees
-                .Skip((pageNumber-1)*pageSize)
+                .OrderBy(x=>x.FirstName)
+                .Skip(pageIndex *pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
-            return new GetEmployeesResult(employees);
+            return new GetEmployeesResult(new PaginatedResult<Employee>(pageIndex,pageSize,totalCount,employees));
         }
     }
 }

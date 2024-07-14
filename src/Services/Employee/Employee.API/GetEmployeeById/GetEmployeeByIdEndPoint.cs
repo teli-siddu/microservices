@@ -7,7 +7,7 @@ namespace Employees.API.GetEmployeeById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/employees/{id}", async (Guid id, ISender sender) =>
+            app.MapGet("/api/employees/{id}", async (Guid id, ISender sender) =>
             {
                 var result = await sender.Send(new GetEmployeeByIdQuery(id));
                 var response = result.Adapt<GetEmployeeByIdResponse>();
